@@ -1,0 +1,21 @@
+version: '3.0'
+
+services:
+    db:
+        image: postgres:alpine
+        restart: always
+        environment:
+            POSTGRES_USER: smartdumpster
+            POSTGRES_PASSWORD: smartdumpster
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+    
+    adminer:
+        image: adminer
+        ports:
+            - 9002:8080
+
+volumes:
+    db-data:
