@@ -18,7 +18,15 @@ GET {{host}}/dumpster/{{testuuid}}
 GET {{host}}/dumpster/{{testuuid}}/token
 ###
 
+GET {{host}}/dumpster/{{testuuid}}/availability
+###
+
 POST {{host}}/dumpster/{{testuuid}}/availability
+Content-Type: application/json
+
+{
+    "available": true
+}
 ###
 
 POST {{host}}/dumpster/{{testuuid}}/dump
