@@ -2,8 +2,9 @@ CREATE TYPE dumptype as ENUM ('paper', 'plastic', 'unsorted');
 
 CREATE TABLE public.dumpster (
     id uuid NOT NULL,
-    name character varying,
-    available boolean,
+    name varchar,
+    available boolean DEFAULT false,
+    weight_limit integer NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -18,7 +19,7 @@ CREATE TABLE public.dump (
 
 CREATE TABLE public.weight (
     id_dumpster uuid NOT NULL,
-    weight integer,
+    weight integer NOT NULL,
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY (id_dumpster, created_at),
     FOREIGN KEY (id_dumpster) REFERENCES dumpster(id)

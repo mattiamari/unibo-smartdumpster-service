@@ -29,9 +29,10 @@ const (
 )
 
 type Dumpster struct {
-	ID        string `db:"id" json:"id"`
-	Name      string `db:"name" json:"name"`
-	Available bool   `db:"available" json:"available"`
+	ID          string `db:"id" json:"id"`
+	Name        string `db:"name" json:"name"`
+	Available   bool   `db:"available" json:"available"`
+	WeightLimit int    `db:"weight_limit" json:"weight_limit"`
 }
 
 type Dump struct {
