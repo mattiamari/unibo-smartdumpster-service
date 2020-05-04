@@ -1,5 +1,6 @@
 @host = http://localhost:8080/api/v1
 @testuuid = c37246d2-3088-45eb-af40-87dfdd6bf314
+@useruuid = c3c0687f-0c03-4f48-a664-4bc616abffe6
 
 ###
 
@@ -30,7 +31,18 @@ Content-Type: application/json
 ###
 
 POST {{host}}/dumpster/{{testuuid}}/dump
+Content-Type: application/json
+
+{
+    "user_id": "{{useruuid}}",
+    "dump_type": "unsorted"
+}
 ###
 
 POST {{host}}/dumpster/{{testuuid}}/weight
+Content-Type: application/json
+
+{
+    "weight": 5
+}
 ###
