@@ -13,5 +13,5 @@ FROM scratch
 
 COPY --from=build /app/service /smartdumpsterservice
 
-EXPOSE 80
+EXPOSE 8080
 CMD [ "/smartdumpsterservice" ]
