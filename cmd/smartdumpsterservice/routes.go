@@ -19,7 +19,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 
 func DumpstersHandler(w http.ResponseWriter, r *http.Request) {
 	dumpsters := []Dumpster{}
-	err := db.Select(&dumpsters, "select * from dumpster")
+	err := db.Select(&dumpsters, getDumpstersQuery(""))
 	if err != nil {
 		log.Print(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -35,12 +35,29 @@ func DumpsterHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	dumpster := Dumpster{}
-	err := db.Get(&dumpster, "select * from dumpster where id=$1", params["dumpsterId"])
+	err := db.Get(&dumpster, getDumpstersQuery("and d.id = $1"), params["dumpsterId"])
 	if err != nil {
 		log.Print(err.Error())
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
+	dumps, err := getDumps(dumpster.ID, 30)
+	if err != nil {
+		log.Print(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	weights, err := getWeights(dumpster.ID, 30)
+	if err != nil {
+		log.Print(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	dumpster.DumpHistory = dumps
+	dumpster.WeightHistory = weights
 
 	json, _ := json.Marshal(map[string]interface{}{"dumpster": dumpster})
 	w.WriteHeader(http.StatusOK)
@@ -128,7 +145,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate token which is <dumpster_id>|<timestamp>
+	// generate token, which is "<dumpster_id>|<timestamp>"
 	token := fmt.Sprintf("%s|%d", params["dumpsterId"], time.Now().Unix())
 
 	// generate signature from token and private key
@@ -160,4 +177,54 @@ func isAvailable(dumpsterID string) (bool, error) {
 	}
 
 	return availability, nil
+}
+
+func getCurrentWeight(dumpsterID string) (int, error) {
+	var weight int
+	err := db.Get(&weight, "select weight from weight where id_dumpster=$1 order by created_at desc limit 1")
+	if err != nil {
+		return -1, err
+	}
+
+	return weight, nil
+}
+
+func getDumps(dumpsterID string, days int) ([]Dump, error) {
+	var dumps []Dump
+	err := db.Select(&dumps,
+		"select * from dump where id_dumpster=$1 and created_at >= $2",
+		dumpsterID,
+		time.Now().AddDate(0, 0, -1*days))
+	if err != nil {
+		return nil, err
+	}
+
+	return dumps, nil
+}
+
+func getWeights(dumpsterID string, days int) ([]Weight, error) {
+	var weights []Weight
+	err := db.Select(&weights,
+		"select * from weight where id_dumpster=$1 and created_at >= $2",
+		dumpsterID,
+		time.Now().AddDate(0, 0, -1*days))
+	if err != nil {
+		return nil, err
+	}
+
+	return weights, nil
+}
+
+func getDumpstersQuery(filter string) string {
+	return fmt.Sprintf(
+		`select ta.*,
+		(select count(*) from dump
+			where id_dumpster = ta.id and created_at >= ta.last_emptied) dumps_since_last_emptied
+		from (
+			select d.*, max(w.created_at) as last_emptied
+			from dumpster d
+			left join weight w on w.id_dumpster = d.id
+			where weight = 0 %s
+			group by d.id
+			order by d.name) ta`, filter)
 }

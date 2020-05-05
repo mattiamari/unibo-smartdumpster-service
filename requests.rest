@@ -1,6 +1,9 @@
+# This file works with the "humao.rest-client" extension for VS Code
+
 @host = http://localhost:8080/api/v1
-@testuuid = c37246d2-3088-45eb-af40-87dfdd6bf314
-@useruuid = c3c0687f-0c03-4f48-a664-4bc616abffe6
+#@dumpster_id = c37246d2-3088-45eb-af40-87dfdd6bf314
+@dumpster_id = 4dcd70bb-4d32-464f-bda0-fd28eb5fe403
+@user_id = c3c0687f-0c03-4f48-a664-4bc616abffe6
 
 ###
 
@@ -13,16 +16,16 @@ POST {{host}}/
 GET {{host}}/dumpsters
 ###
 
-GET {{host}}/dumpster/{{testuuid}}
+GET {{host}}/dumpster/{{dumpster_id}}
 ###
 
-GET {{host}}/dumpster/{{testuuid}}/token
+GET {{host}}/dumpster/{{dumpster_id}}/token
 ###
 
-GET {{host}}/dumpster/{{testuuid}}/availability
+GET {{host}}/dumpster/{{dumpster_id}}/availability
 ###
 
-POST {{host}}/dumpster/{{testuuid}}/availability
+POST {{host}}/dumpster/{{dumpster_id}}/availability
 Content-Type: application/json
 
 {
@@ -30,16 +33,16 @@ Content-Type: application/json
 }
 ###
 
-POST {{host}}/dumpster/{{testuuid}}/dump
+POST {{host}}/dumpster/{{dumpster_id}}/dump
 Content-Type: application/json
 
 {
-    "user_id": "{{useruuid}}",
-    "dump_type": "unsorted"
+    "user_id": "{{user_id}}",
+    "dump_type": "plastic"
 }
 ###
 
-POST {{host}}/dumpster/{{testuuid}}/weight
+POST {{host}}/dumpster/{{dumpster_id}}/weight
 Content-Type: application/json
 
 {

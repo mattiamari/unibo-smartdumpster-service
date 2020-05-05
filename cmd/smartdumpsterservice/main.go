@@ -30,21 +30,25 @@ const (
 )
 
 type Dumpster struct {
-	ID          string `db:"id" json:"id"`
-	Name        string `db:"name" json:"name"`
-	Available   bool   `db:"available" json:"available"`
-	WeightLimit int    `db:"weight_limit" json:"weight_limit"`
+	ID                    string    `db:"id" json:"id"`
+	Name                  string    `db:"name" json:"name"`
+	Available             bool      `db:"available" json:"available"`
+	WeightLimit           int       `db:"weight_limit" json:"weight_limit"`
+	LastEmptied           time.Time `db:"last_emptied" json:"last_emptied"`
+	DumpsSinceLastEmptied int       `db:"dumps_since_last_emptied" json:"dumps_since_last_emptied"`
+	DumpHistory           []Dump    `json:"dump_history,omitempty"`
+	WeightHistory         []Weight  `json:"weight_history,omitempty"`
 }
 
 type Dump struct {
-	DumpsterID string    `db:"id_dumpster" json:"dumpster_id"`
+	DumpsterID string    `db:"id_dumpster" json:"-"`
 	UserID     string    `db:"id_user" json:"user_id"`
 	Type       DumpType  `db:"type" json:"dump_type"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 }
 
 type Weight struct {
-	DumpsterID string    `db:"id_dumpster" json:"dumpster_id"`
+	DumpsterID string    `db:"id_dumpster" json:"-"`
 	Weight     int       `db:"weight" json:"weight"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 }
