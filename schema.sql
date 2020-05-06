@@ -1,6 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS smartdumpster;
+
 CREATE TYPE dumptype as ENUM ('paper', 'plastic', 'unsorted');
 
-CREATE TABLE public.dumpster (
+CREATE TABLE smartdumpster.dumpster (
     id uuid NOT NULL,
     name varchar,
     available boolean DEFAULT false,
@@ -8,7 +10,7 @@ CREATE TABLE public.dumpster (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE public.dump (
+CREATE TABLE smartdumpster.dump (
     id_user uuid NOT NULL,
     id_dumpster uuid NOT NULL,
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -17,7 +19,7 @@ CREATE TABLE public.dump (
     FOREIGN KEY (id_dumpster) REFERENCES dumpster(id)
 );
 
-CREATE TABLE public.weight (
+CREATE TABLE smartdumpster.weight (
     id_dumpster uuid NOT NULL,
     weight integer NOT NULL,
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -25,4 +27,5 @@ CREATE TABLE public.weight (
     FOREIGN KEY (id_dumpster) REFERENCES dumpster(id)
 );
 
-INSERT INTO public.dumpster VALUES ('c37246d2-3088-45eb-af40-87dfdd6bf314', 'Test Dumpster', true);
+INSERT INTO smartdumpster.dumpster VALUES ('c37246d2-3088-45eb-af40-87dfdd6bf314', 'Test Dumpster', true, 100);
+INSERT INTO smartdumpster.dumpster VALUES ('4dcd70bb-4d32-464f-bda0-fd28eb5fe403', 'Test Dumpster 2', true, 200);
