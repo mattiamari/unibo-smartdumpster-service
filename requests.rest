@@ -38,7 +38,7 @@ Content-Type: application/json
 
 {
     "user_id": "{{user_id}}",
-    "dump_type": "plastic"
+    "dump_type": "unsorted"
 }
 ###
 
@@ -46,6 +46,6 @@ POST {{host}}/dumpster/{{dumpster_id}}/weight
 Content-Type: application/json
 
 {
-    "weight": 5
+    "weight": 0
 }
 ###

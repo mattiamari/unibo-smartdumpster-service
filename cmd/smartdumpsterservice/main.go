@@ -36,8 +36,19 @@ type Dumpster struct {
 	WeightLimit           int       `db:"weight_limit" json:"weight_limit"`
 	LastEmptied           time.Time `db:"last_emptied" json:"last_emptied"`
 	DumpsSinceLastEmptied int       `db:"dumps_since_last_emptied" json:"dumps_since_last_emptied"`
-	DumpHistory           []Dump    `json:"dump_history,omitempty"`
-	WeightHistory         []Weight  `json:"weight_history,omitempty"`
+	CurrentWeight         int       `db:"current_weight" json:"current_weight"`
+}
+
+type DumpsterDetails struct {
+	ID                    string    `db:"id" json:"id"`
+	Name                  string    `db:"name" json:"name"`
+	Available             bool      `db:"available" json:"available"`
+	WeightLimit           int       `db:"weight_limit" json:"weight_limit"`
+	LastEmptied           time.Time `db:"last_emptied" json:"last_emptied"`
+	DumpsSinceLastEmptied int       `db:"dumps_since_last_emptied" json:"dumps_since_last_emptied"`
+	CurrentWeight         int       `db:"current_weight" json:"current_weight"`
+	DumpHistory           []Dump    `json:"dump_history"`
+	WeightHistory         []Weight  `json:"weight_history"`
 }
 
 type Dump struct {
@@ -48,9 +59,10 @@ type Dump struct {
 }
 
 type Weight struct {
-	DumpsterID string    `db:"id_dumpster" json:"-"`
-	Weight     int       `db:"weight" json:"weight"`
-	CreatedAt  time.Time `db:"created_at" json:"created_at"`
+	DumpsterID            string    `db:"id_dumpster" json:"-"`
+	Weight                int       `db:"weight" json:"weight"`
+	DumpsSinceLastEmptied int       `db:"dumps_since_last_emptied" json:"dumps_since_last_emptied"`
+	CreatedAt             time.Time `db:"created_at" json:"created_at"`
 }
 
 type Availability struct {

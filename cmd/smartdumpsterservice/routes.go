@@ -34,7 +34,7 @@ func DumpstersHandler(w http.ResponseWriter, r *http.Request) {
 func DumpsterHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	dumpster := Dumpster{}
+	dumpster := DumpsterDetails{}
 	err := db.Get(&dumpster, getDumpstersQuery("and d.id = $1"), params["dumpsterId"])
 	if err != nil {
 		log.Print(err.Error())
@@ -190,9 +190,9 @@ func getCurrentWeight(dumpsterID string) (int, error) {
 }
 
 func getDumps(dumpsterID string, days int) ([]Dump, error) {
-	var dumps []Dump
+	dumps := make([]Dump, 0)
 	err := db.Select(&dumps,
-		"select * from dump where id_dumpster=$1 and created_at >= $2",
+		"select * from dump where id_dumpster=$1 and created_at >= $2 order by created_at",
 		dumpsterID,
 		time.Now().AddDate(0, 0, -1*days))
 	if err != nil {
@@ -203,9 +203,19 @@ func getDumps(dumpsterID string, days int) ([]Dump, error) {
 }
 
 func getWeights(dumpsterID string, days int) ([]Weight, error) {
-	var weights []Weight
+	weights := make([]Weight, 0)
 	err := db.Select(&weights,
-		"select * from weight where id_dumpster=$1 and created_at >= $2",
+		`select t1.id_dumpster, t1.weight, t1.created_at, count(d) as dumps_since_last_emptied
+		from (
+		select w.*, max(w2.created_at) as last_emptied from weight w
+		left join weight w2 on w.id_dumpster = w.id_dumpster and w2.weight = 0 and w2.created_at <= w.created_at
+		where w.id_dumpster = $1 and w.created_at >= $2
+		group by w.id_dumpster, w.weight, w.created_at
+		) t1
+		
+		left join dump d on d.id_dumpster = t1.id_dumpster and d.created_at between t1.last_emptied and t1.created_at
+		group by t1.id_dumpster, t1.weight, t1.created_at, t1.last_emptied
+		order by t1.created_at`,
 		dumpsterID,
 		time.Now().AddDate(0, 0, -1*days))
 	if err != nil {
@@ -217,14 +227,25 @@ func getWeights(dumpsterID string, days int) ([]Weight, error) {
 
 func getDumpstersQuery(filter string) string {
 	return fmt.Sprintf(
-		`select ta.*,
-		(select count(*) from dump
-			where id_dumpster = ta.id and created_at >= ta.last_emptied) dumps_since_last_emptied
-		from (
-			select d.*, max(w.created_at) as last_emptied
-			from dumpster d
-			left join weight w on w.id_dumpster = d.id
-			where weight = 0 %s
-			group by d.id
-			order by d.name) ta`, filter)
+		`select d.*, current_weight, last_emptied, count(du) as dumps_since_last_emptied from dumpster d
+
+		-- current weight
+		left join (
+		select w.id_dumpster, w.weight as current_weight from weight w
+		join (select id_dumpster, max(created_at) as last_weight from weight
+		group by id_dumpster) w2 on w2.id_dumpster = w.id_dumpster
+		where w.created_at = w2.last_weight) as cw on cw.id_dumpster = d.id
+		
+		-- date last emptied
+		left join (
+		select id_dumpster, max(created_at) as last_emptied from weight
+		where weight = 0
+		group by id_dumpster) as le on le.id_dumpster = d.id
+		
+		-- dumps since last emptied
+		left join dump du on du.id_dumpster = d.id and du.created_at >= last_emptied
+		
+		where 1=1 %s
+		group by d.id, current_weight, last_emptied
+		order by d.name`, filter)
 }
