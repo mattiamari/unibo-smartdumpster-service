@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>Statistiche bidone</title>
+        <link rel="stylesheet" href="style.css">
     </head>
 </html>
 
@@ -12,11 +13,19 @@
     <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     
     <body>
+        <div class="main-wrap">
+            <a href="elencoBidoni.html">Torna all'elenco</a>
+            
+            <div class="chart-wrap chart-wrap--wide">
         <canvas id="myChart1" width="200" height="200"></canvas>
-
         <canvas id="myChart2" width="200" height="200"></canvas>
+            </div>
         
+            <div class="chart-wrap chart-wrap--small">
         <canvas id="myChart3" width="200" height="200"></canvas>
+            </div>
+            
+            <a href="elencoBidoni.html">Torna all'elenco</a>
+        </div>
 
-        <a href="./elencoBidoni.html">Torna all'elenco dei cassonetti</a>
     </body>
