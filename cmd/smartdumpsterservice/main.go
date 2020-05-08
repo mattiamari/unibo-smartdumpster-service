@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -107,7 +108,10 @@ func main() {
 	api.HandleFunc("/dumpster/{dumpsterId}/weight", WeightHandler).Methods(http.MethodPost).Headers("Content-Type", "application/json")
 	api.HandleFunc("/dumpster/{dumpsterId}/token", TokenHandler).Methods(http.MethodGet)
 
-	api.Use(mux.CORSMethodMiddleware(api))
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"*"}))
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8080", cors(r)))
 }
