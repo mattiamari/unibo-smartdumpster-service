@@ -1,41 +1,41 @@
-var apiUrl = 'http://localhost:8080/api/v1';
+const apiUrl = 'http://localhost:8080/api/v1';
 
 /*
 Chiamata AJAX all'url specificato e relativa funzione da chiamare per gestire il json.
 I dati sono ritornati parserizzati tramite $.parseJSON().
 */
-$.getJSON(apiUrl + "/dumpsters", function(data) {
-
+fetch(apiUrl + "/dumpsters").then(response => response.json()).then(data => {
     // Creo il bottone uguale per ogni dumpster.
-    var btnDetails = '<td><button class="button">Abilita/Disabilita</button></td>';
+    const table = document.querySelector('#dumpstersTable');
 
-    $.each(data.dumpsters, function(key, val) {
-        var tdId = `<td class="idDumpster"><a href="statisticheBidone.html?id=${val.id}">${val.id}</a></td>`;
-        var tdName = '<td>' + val.name + '</td>';
-        var tdStatus = '<td class="status">' + val.available + '</td>';
-        var tdCountDumps = '<td>' + val.dumps_since_last_emptied + '</td>';
-        var tdCurrentWeight = '<td>' + val.current_weight + '</td>';
-        var tdLimitWeight = '<td>' + val.weight_limit + '</td>';
+    for (const dumpster of data.dumpsters) {
+        const row = document.createElement('tr');
+        row.innerHTML =
+            `<td class="idDumpster"><a href="statisticheBidone.html?id=${dumpster.id}">${dumpster.id}</a></td>
+            <td>${dumpster.name}</td>
+            <td>${dumpster.dumps_since_last_emptied}</td>
+            <td>${dumpster.current_weight}</td>
+            <td>${dumpster.weight_limit}</td>
+            <td class="status">${dumpster.available}</td>
+            <td><button class="btnAvailability">Abilita/Disabilita</button></td>`;
 
-        // Riempio la tabella.
-        $('#dumpstersTable').append('<tr>' + tdId + tdName + tdCountDumps 
-            + tdCurrentWeight + tdLimitWeight + tdStatus + btnDetails + '</tr>');
+        table.append(row);
+    }
 
-    });
+    document.querySelectorAll('.btnAvailability').forEach(e => {
+        e.addEventListener("click", function() {
+            const idDumpster = this.parentNode.parentNode.querySelector('.idDumpster > a').innerHTML;
+            let status = this.parentNode.parentNode.querySelector('.status').innerHTML;
+            status = status == 'true' ? false : true; // faccio lo stato opposto
+            //this.parentNode.parentNode.querySelector('#status').innerHTML = status;
 
-    document.querySelector('.button').addEventListener("click", function() {
-        status = this.parentNode.parentNode.querySelector('.status').innerHTML;
-        idDumpster = this.parentNode.parentNode.querySelector('.idDumpster > a').innerHTML;
-        status == 'true' ? status = 'false' : status = 'true';
-        //this.parentNode.parentNode.querySelector('#status').innerHTML = status;
-
-        // Invio il valore di status
-        $.ajax({
-            type: "POST",
-            url: apiUrl + "/dumpster/" + idDumpster + "/availability",
-            contentType: "application/json",
-            data: JSON.stringify({available: status})
+            // Invio il valore di status
+            fetch(apiUrl + "/dumpster/" + idDumpster + "/availability", {
+                method: "POST",
+                mode: "cors",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({available: status})
+            });
         });
     });
 });
-

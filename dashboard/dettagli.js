@@ -1,7 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 
-var apiUrl = "http://mattiamari.me:8069/api/v1/dumpster/" + id;
+var apiUrl = "http://localhost:8080/api/v1/dumpster/" + id;
 
 
 var dataNumDumps = [];
@@ -43,28 +43,28 @@ $.getJSON(apiUrl, function(data) {
 
     var myChart = new Chart(ctx1, {
         type: 'line',
-  data: {
-        labels: dataNumDumps,
-        datasets: [{ 
-            data: dataWeight,
-            label: "Peso",
-            borderColor: "#3e95cd",
-            fill: false,
-        }, {
-            label: "Capienza massima",
-            borderColor: "rgb(0, 0, 0)",
-            data: arrayWeightLimit,
-            //borderDash: [0,50],
-            fill: false,  
-        }]
-    },
-    options: {
-        title: {
-            display: true,
-            text: 'Grafico dei depositi'
+        data: {
+            labels: dataNumDumps,
+            datasets: [{ 
+                data: dataWeight,
+                label: "Peso",
+                borderColor: "#3e95cd",
+                fill: false,
+            }, {
+                label: "Capienza massima",
+                borderColor: "rgb(0, 0, 0)",
+                data: arrayWeightLimit,
+                //borderDash: [0,50],
+                fill: false,  
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Grafico dei depositi'
+            }
         }
-    }
-});
+    });
 
     var ctx2 = document.getElementById('myChart2');
 
@@ -80,7 +80,7 @@ $.getJSON(apiUrl, function(data) {
                 borderColor: "#ff6384",
                 fill: false
             }, {
-                label: 'Numero deposito',
+                label: 'Numero depositi',
                 yAxisID: 'B',
                 borderColor: 'rgb(254, 217, 118)',
                 data: dataNumDumps,
@@ -94,9 +94,9 @@ $.getJSON(apiUrl, function(data) {
             },
             scales: {
                 yAxes: [{
-                   id: 'A',
-                   type: 'linear',
-                   position:'left' 
+                    id: 'A',
+                    type: 'linear',
+                    position:'left' 
                 }, {
                     id: 'B',
                     type: 'linear',
