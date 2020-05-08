@@ -112,7 +112,7 @@ $.getJSON(apiUrl, function(data) {
                 }]
             }
         }
-    })
+    });
 
     var dumpsTypeValue = []
     var dumpsTypeOccurences = [];
@@ -139,5 +139,5 @@ $.getJSON(apiUrl, function(data) {
                 text: 'Distribuzione tipologia di rifiuti'
             }
         },
-    })
+    });
 });
