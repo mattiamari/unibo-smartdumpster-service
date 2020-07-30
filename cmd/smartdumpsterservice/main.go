@@ -97,7 +97,9 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", RootHandler).Methods(http.MethodGet)
 
-	r.PathPrefix("/dashboard").Handler(http.FileServer(http.Dir("./dashboard/")))
+	dashboard := http.StripPrefix("/dashboard/", http.FileServer(http.Dir("./dashboard/")))
+
+	r.PathPrefix("/dashboard/").Handler(dashboard)
 	api := r.PathPrefix("/api/v1").Subrouter()
 	api.Use(HeadersMiddleware)
 	api.HandleFunc("/", RootHandler).Methods(http.MethodGet)
