@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8080/api/v1';
+const apiUrl = 'http://smartdumpster.mattiamari.me/api/v1';
 
 /*
 Chiamata AJAX all'url specificato e relativa funzione da chiamare per gestire il json.
