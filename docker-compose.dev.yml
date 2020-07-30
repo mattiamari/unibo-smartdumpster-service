@@ -3,7 +3,6 @@ version: '3.0'
 services:
     db:
         image: postgres:alpine
-        restart: always
         environment:
             POSTGRES_USER: smartdumpster
             POSTGRES_PASSWORD: smartdumpster

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/handlers"
@@ -77,7 +79,11 @@ func main() {
 	log.Println("hi! :)")
 	var err error
 
-	dbConnStr := "user=smartdumpster password=smartdumpster dbname=smartdumpster host=localhost sslmode=disable"
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+
+	dbConnStr := fmt.Sprintf("user=%s password=%s dbname=smartdumpster host=%s sslmode=disable", dbUser, dbPassword, dbHost)
 	db, err = sqlx.Connect("postgres", dbConnStr)
 	if err != nil {
 		log.Fatal(err)
