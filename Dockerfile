@@ -12,6 +12,7 @@ RUN CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -o service cmd/smart
 FROM scratch
 
 COPY --from=build /app/service /smartdumpsterservice
+COPY dashboard /dashboard
 
 EXPOSE 8080
 CMD [ "/smartdumpsterservice" ]
