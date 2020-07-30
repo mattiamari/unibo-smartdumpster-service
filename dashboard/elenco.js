@@ -11,7 +11,7 @@ fetch(apiUrl + "/dumpsters").then(response => response.json()).then(data => {
     for (const dumpster of data.dumpsters) {
         const row = document.createElement('tr');
         row.innerHTML =
-            `<td class="idDumpster"><a href="stats.html?id=${dumpster.id}">${dumpster.id}</a></td>
+            `<td class="idDumpster"><a href="/dashboard/stats.html?id=${dumpster.id}">${dumpster.id}</a></td>
             <td>${dumpster.name}</td>
             <td>${dumpster.dumps_since_last_emptied}</td>
             <td>${dumpster.current_weight}</td>
