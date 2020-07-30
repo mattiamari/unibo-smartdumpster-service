@@ -84,7 +84,7 @@ func main() {
 	}
 	defer db.Close()
 
-	key, err := ioutil.ReadFile("test-key")
+	key, err := ioutil.ReadFile("./signkey")
 	if err != nil {
 		log.Fatal("Unable to read key file")
 	}

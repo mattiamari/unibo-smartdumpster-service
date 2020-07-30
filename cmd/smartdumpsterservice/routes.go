@@ -145,15 +145,15 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate token, which is "<dumpster_id>|<timestamp>"
-	token := fmt.Sprintf("%s|%d", params["dumpsterId"], time.Now().Unix())
+	// generate token, which is "<dumpster_id>_<timestamp>"
+	token := fmt.Sprintf("%s_%d", params["dumpsterId"], time.Now().Unix())
 
 	// generate signature from token and private key
 	signature, _ := signer.Sign(nil, []byte(token))
 	encodedSig := base64.StdEncoding.EncodeToString(signature.Blob)
 
 	// append base64 encoded signature to the token
-	token = fmt.Sprintf("%s|%s", token, encodedSig)
+	token = fmt.Sprintf("%s_%s", token, encodedSig)
 
 	json, _ := json.Marshal(map[string]string{"token": token})
 	w.WriteHeader(http.StatusOK)
@@ -216,8 +216,7 @@ func getWeights(dumpsterID string, days int) ([]Weight, error) {
 		left join dump d on d.id_dumpster = t1.id_dumpster and d.created_at between t1.last_emptied and t1.created_at
 		group by t1.id_dumpster, t1.weight, t1.created_at, t1.last_emptied
 		order by t1.created_at`,
-		dumpsterID,
-		time.Now().AddDate(0, 0, -1*days))
+		dumpsterID, time.Now().AddDate(0, 0, -1*days))
 	if err != nil {
 		return nil, err
 	}

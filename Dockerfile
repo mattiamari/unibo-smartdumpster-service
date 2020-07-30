@@ -1,4 +1,4 @@
-FROM golang AS build
+FROM golang:1.14-alpine AS build
 
 WORKDIR /app
 
@@ -12,6 +12,7 @@ RUN CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -o service cmd/smart
 FROM scratch
 
 COPY --from=build /app/service /smartdumpsterservice
+COPY signkey /signkey
 COPY dashboard /dashboard
 
 EXPOSE 8080
