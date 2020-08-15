@@ -1,7 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 
-var apiUrl = "http://smartdumpster.mattiamari.me/api/v1/dumpster/" + id;
+var apiUrl = "https://smartdumpster.mattiamari.me/api/v1/dumpster/" + id;
 
 
 var dataNumDumps = [];
