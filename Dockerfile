@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine AS build
+FROM golang:1.15-alpine AS build
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY cmd ./cmd
 
-RUN CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -o service cmd/smartdumpsterservice/*.go
+RUN CGO_ENABLED=0 go build -o service cmd/smartdumpsterservice/*.go
 
 FROM scratch
 
